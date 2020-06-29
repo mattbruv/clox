@@ -9,7 +9,12 @@ HEADERS := $(wildcard $(SOURCE_DIR)/*.h)
 OBJECTS := $(addprefix $(BUILD_DIR)/, $(notdir $(SOURCES:.c=.o)))
 
 clox: $(OBJECTS)
-	$(CC) $(CFLAGS) $^ -o $@
+	@ $(CC) $(CFLAGS) $^ -o $@
 
 $(BUILD_DIR)/%.o: $(SOURCE_DIR)/%.c $(HEADERS)
-	$(CC) -c $(CFLAGS) -o $@ $<
+	@ mkdir -p build
+	@ $(CC) -c $(CFLAGS) -o $@ $<
+
+clean:
+	@ rm -f build/*
+	@ rm clox.exe
