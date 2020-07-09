@@ -18,14 +18,14 @@ void initScanner(const char* source) {
     scanner.line = 1;
 }
 
+static bool isDigit(char c) {
+    return c >= '0' && c <= '9';
+}
+
 static bool isAlpha(char c) {
     return (c >= 'a' && c <= 'z') ||
             (c >= 'A' && c <= 'Z') ||
             c == '_';
-}
-
-static bool isNumber(char c) {
-    return c >= '0' && c <= '9';
 }
 
 static bool isAtEnd() {
@@ -71,6 +71,18 @@ static Token errorToken(const char* message) {
     token.line = scanner.line;
 
     return token;
+}
+
+static Token string() {
+    while (peek() != '"' && !isAtEnd()) {
+        if (peek() == '\n') scanner.line++;
+        advance();
+    }
+    if (isAtEnd()) return errorToken("Unterminated string.");
+
+    // the closing quote
+    advance();
+    return makeToken(TOKEN_STRING);
 }
 
 static void skipWhitespace() {
@@ -205,16 +217,4 @@ Token scanToken() {
     }
 
     return errorToken("Unexpected character.");
-}
-
-static Token string() {
-    while (peek() != '"' && !isAtEnd()) {
-        if (peek() == '\n') scanner.line++;
-        advance();
-    }
-    if (isAtEnd()) return errorToken("Unterminated string.");
-
-    // the closing quote
-    advance();
-    return makeToken(TOKEN_STRING);
 }
